@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "LICENSE"
+
+[[mods]]
+modId = "MODID"
+version = "${version}"
+displayName = "MODID"
+authors = "Alkeari"
+description = ""
+
+[[dependencies.MODID]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.MODID]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.21)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.MODID]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.2.14,)"
+ordering = "NONE"
+side = "BOTH"
