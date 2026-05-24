@@ -9,7 +9,7 @@ architectury {
 
 loom {
     forge {
-        mixinConfig 'MODID.common.mixins.json'
+        mixinConfig 'geotectonic.common.mixins.json'
     }
 }
 

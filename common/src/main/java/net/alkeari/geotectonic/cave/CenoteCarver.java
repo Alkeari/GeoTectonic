@@ -84,9 +84,6 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
         float maxExtent = chamberWr + 7f;
         boolean chamberOverlaps = openingX + maxExtent >= minX && openingX - maxExtent <= maxX
                 && openingZ + maxExtent >= minZ && openingZ - maxExtent <= maxZ;
-        // True only for the chunk that contains the opening (used for decoration)
-        boolean hasFunnel = openingX >= minX && openingX <= maxX
-                && openingZ >= minZ && openingZ <= maxZ;
         // True for any chunk whose XZ range overlaps the funnel column
         boolean funnelOverlaps = openingX + maxFunnelRadius >= minX && openingX - maxFunnelRadius <= maxX
                 && openingZ + maxFunnelRadius >= minZ && openingZ - maxFunnelRadius <= maxZ;
@@ -127,7 +124,7 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
                 }
             }
 
-            for (int y = funnelBase; y < surfaceY; y++) {
+            for (int y = funnelBase; y <= surfaceY; y++) {
                 float t = (float)(surfaceY - y) / Math.max(1, surfaceY - funnelBase);
                 float baseFunnelWr = 2.0f + (1f - t) * (chamberWr * 0.65f - 2.0f);
                 float undulation = 1.0f + 0.22f * (float) Math.sin(y * 0.65 + openingX * 0.12);
@@ -139,12 +136,12 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
                 anyCarved |= carveNoisyEllipsoid(chunk, minX, minZ, maxX, maxZ, carvingMask,
                         driftedX, y, driftedZ, funnelWr, 0.9f, noiseSeed + y * 7);
             }
+        }
 
-            // Decoration runs only in the chunk that owns the opening
-            if (hasFunnel) {
-                decorateChamber(chunk, minX, minZ, maxX, maxZ, random,
-                        openingX, chamberY, openingZ, chamberWr, chamberHr);
-            }
+        // Decoration runs in every chunk where the chamber overlaps (not just the source chunk)
+        if (chamberOverlaps) {
+            decorateChamber(chunk, minX, minZ, maxX, maxZ, random,
+                    openingX, chamberY, openingZ, chamberWr, chamberHr);
         }
 
         return anyCarved;

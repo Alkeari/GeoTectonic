@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:karst",
+  "config": {
+    "probability": 0.0015
+  }
+}

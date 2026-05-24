@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:erosion",
+  "config": {
+    "probability": 0.0008
+  }
+}

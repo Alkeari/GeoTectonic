@@ -3,27 +3,27 @@ loaderVersion = "[47,)"
 license = "LICENSE"
 
 [[mods]]
-modId = "MODID"
+modId = "geotectonic"
 version = "${version}"
-displayName = "MODID"
+displayName = "GeoTectonic"
 authors = "Alkeari"
 description = ""
 
-[[dependencies.MODID]]
+[[dependencies.geotectonic]]
 modId = "forge"
 mandatory = true
 versionRange = "[47.4,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.MODID]]
+[[dependencies.geotectonic]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.20.1,1.21)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.MODID]]
+[[dependencies.geotectonic]]
 modId = "architectury"
 mandatory = true
 versionRange = "[9.2.14,)"
