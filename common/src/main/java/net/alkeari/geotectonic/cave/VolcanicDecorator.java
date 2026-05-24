@@ -20,7 +20,7 @@ public class VolcanicDecorator {
 
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                for (int y = -1; y >= -60; y--) {
+                for (int y = 0; y >= -60; y--) {
                     BlockPos pos = new BlockPos(x, y, z);
                     if (!chunk.getBlockState(pos).is(Blocks.CAVE_AIR)) continue;
 

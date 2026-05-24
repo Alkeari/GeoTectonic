@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:cenote",
+  "config": {
+    "probability": 0.0005
+  }
+}

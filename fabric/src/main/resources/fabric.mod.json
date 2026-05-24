@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "MODID",
+  "id": "geotectonic",
   "version": "${version}",
-  "name": "MODID",
+  "name": "GeoTectonic",
   "description": "",
   "authors": ["Alkeari"],
   "license": "LICENSE",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.alkeari.MODID.fabric.MODIDFabric"
+      "net.alkeari.geotectonic.fabric.GeoTectonicFabric"
     ]
   },
   "mixins": [
-    "MODID.common.mixins.json"
+    "geotectonic.common.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.23",
