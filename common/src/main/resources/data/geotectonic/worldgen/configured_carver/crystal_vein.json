@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:crystal_vein",
+  "config": {
+    "probability": 0.010
+  }
+}

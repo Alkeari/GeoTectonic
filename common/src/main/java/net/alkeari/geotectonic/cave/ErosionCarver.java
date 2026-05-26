@@ -1,7 +1,10 @@
 package net.alkeari.geotectonic.cave;
 
 import com.mojang.serialization.Codec;
+import net.alkeari.geotectonic.config.ModConfig;
+import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
@@ -23,11 +26,19 @@ public class ErosionCarver extends AbstractGeoCarver<ErosionCarverConfig> {
     }
 
     @Override
+    protected BlockState caveAirState() {
+        return GeoTectonicBlocks.EROSION_AIR.get().defaultBlockState();
+    }
+
+    @Override
     public int getRange() { return 10; }
 
     @Override
     public boolean isStartChunk(ErosionCarverConfig config, RandomSource random) {
-        return random.nextFloat() < config.probability;
+        double prob;
+        try { prob = ModConfig.getErosionProbability(); }
+        catch (Throwable t) { prob = config.probability; }
+        return ModConfig.isErosionEnabled() && random.nextFloat() < prob;
     }
 
     @Override
@@ -139,7 +150,7 @@ public class ErosionCarver extends AbstractGeoCarver<ErosionCarverConfig> {
                 int waterY = by - 1;
                 if (waterY >= chunk.getMinBuildHeight() && waterY < chunk.getMaxBuildHeight()) {
                     BlockPos waterPos = new BlockPos(bx, waterY, bz);
-                    if (chunk.getBlockState(waterPos).is(Blocks.CAVE_AIR)) {
+                    if (chunk.getBlockState(waterPos).is(GeoTectonicBlocks.EROSION_AIR.get())) {
                         chunk.setBlockState(waterPos, Blocks.WATER.defaultBlockState(), false);
                         chunk.markPosForPostprocessing(waterPos);
                     }
@@ -170,7 +181,7 @@ public class ErosionCarver extends AbstractGeoCarver<ErosionCarverConfig> {
             for (int z = minZ; z <= maxZ; z++) {
                 for (int y = bMinY; y <= bMaxY; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    boolean isCaveAir = chunk.getBlockState(pos).is(Blocks.CAVE_AIR);
+                    boolean isCaveAir = chunk.getBlockState(pos).is(GeoTectonicBlocks.EROSION_AIR.get());
                     boolean isWater   = chunk.getBlockState(pos).is(Blocks.WATER);
                     if (!isCaveAir && !isWater) continue;
 
@@ -193,8 +204,8 @@ public class ErosionCarver extends AbstractGeoCarver<ErosionCarverConfig> {
                             BlockPos b1 = pos.below();
                             BlockPos b2 = pos.below(2);
                             if (b1.getY() >= chunk.getMinBuildHeight() && b2.getY() >= chunk.getMinBuildHeight()
-                                    && chunk.getBlockState(b1).is(Blocks.CAVE_AIR)
-                                    && chunk.getBlockState(b2).is(Blocks.CAVE_AIR)) {
+                                    && chunk.getBlockState(b1).is(GeoTectonicBlocks.EROSION_AIR.get())
+                                    && chunk.getBlockState(b2).is(GeoTectonicBlocks.EROSION_AIR.get())) {
                                 chunk.setBlockState(pos, Blocks.HANGING_ROOTS.defaultBlockState(), false);
                                 continue;
                             }

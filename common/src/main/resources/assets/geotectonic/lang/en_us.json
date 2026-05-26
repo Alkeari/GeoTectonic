@@ -1,0 +1,26 @@
+{
+  "subtitle.geotectonic.fracture":      "Tectonic Fracture",
+  "subtitle.geotectonic.karst":         "Karst Chamber",
+  "subtitle.geotectonic.cenote":        "Cenote",
+  "subtitle.geotectonic.erosion":       "Erosion Cave",
+  "subtitle.geotectonic.sea_cave":      "Sea Cave",
+  "subtitle.geotectonic.crystal_vein":  "Crystal Vein",
+  "subtitle.geotectonic.volcanic_vent": "Volcanic Vent",
+
+  "advancements.geotectonic.root.title": "Adventurer of the Deep",
+  "advancements.geotectonic.root.description": "Enter a GeoTectonic cave.",
+  "advancements.geotectonic.fracture.title": "Into the Fracture",
+  "advancements.geotectonic.fracture.description": "Descend into a tectonic fracture.",
+  "advancements.geotectonic.karst.title": "Chamber of Stone",
+  "advancements.geotectonic.karst.description": "Find a karst cave system.",
+  "advancements.geotectonic.cenote.title": "The Sunken Pool",
+  "advancements.geotectonic.cenote.description": "Discover a cenote.",
+  "advancements.geotectonic.erosion.title": "Follow the Water",
+  "advancements.geotectonic.erosion.description": "Walk an erosion cave.",
+  "advancements.geotectonic.sea_cave.title": "Tides Below",
+  "advancements.geotectonic.sea_cave.description": "Swim into a flooded sea cave.",
+  "advancements.geotectonic.crystal_vein.title": "Following the Vein",
+  "advancements.geotectonic.crystal_vein.description": "Find a mineralized fault deep underground.",
+  "advancements.geotectonic.volcanic_vent.title": "Into the Heat",
+  "advancements.geotectonic.volcanic_vent.description": "Descend into a deep hydrothermal vent."
+}

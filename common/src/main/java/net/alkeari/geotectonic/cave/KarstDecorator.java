@@ -1,5 +1,6 @@
 package net.alkeari.geotectonic.cave;
 
+import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -47,7 +48,7 @@ public class KarstDecorator {
                 for (int y = Math.max(chunk.getMinBuildHeight(), scanMin);
                      y <= Math.min(chunk.getMaxBuildHeight() - 1, scanMax); y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (chunk.getBlockState(pos).is(Blocks.CAVE_AIR)
+                    if (chunk.getBlockState(pos).is(GeoTectonicBlocks.KARST_AIR.get())
                             && chunk.getBlockState(pos.below()).isSolid()) {
                         waterY = Math.min(waterY, y);
                     }
@@ -60,23 +61,25 @@ public class KarstDecorator {
             for (int z = minZ; z <= maxZ; z++) {
                 for (int y = chunk.getMinBuildHeight(); y < chunk.getMaxBuildHeight(); y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (!chunk.getBlockState(pos).is(Blocks.CAVE_AIR)) continue;
+                    if (!chunk.getBlockState(pos).is(GeoTectonicBlocks.KARST_AIR.get())) continue;
 
                     BlockState above = chunk.getBlockState(pos.above());
                     BlockState below = chunk.getBlockState(pos.below());
 
-                    if (above.isSolid()) {
+                    // Stalactite/vine: hang from solid non-dripstone ceiling only
+                    if (above.isSolid() && !above.is(Blocks.POINTED_DRIPSTONE)) {
                         float r = rand.nextFloat();
-                        if (r < 0.25f) {
+                        if (r < 0.12f) {
                             chunk.setBlockState(pos, STALACTITE_TIP, false);
                             continue;
-                        } else if (r < 0.35f) {
+                        } else if (r < 0.20f) {
                             chunk.setBlockState(pos, CAVE_VINE_TIP, false);
                             continue;
                         }
                     }
 
-                    if (below.isSolid() && rand.nextFloat() < 0.15f) {
+                    // Stalagmite: grow from solid non-dripstone floor only
+                    if (below.isSolid() && !below.is(Blocks.POINTED_DRIPSTONE) && rand.nextFloat() < 0.07f) {
                         chunk.setBlockState(pos, STALAGMITE_TIP, false);
                         continue;
                     }
@@ -92,7 +95,7 @@ public class KarstDecorator {
                         }
                     }
 
-                    // Water pool at lowest cave floor in hub area (hub XZ footprint only)
+                    // Water pool at lowest karst floor in hub area (hub XZ footprint only)
                     if (waterY != Integer.MAX_VALUE && y == waterY
                             && x >= searchMinX && x <= searchMaxX
                             && z >= searchMinZ && z <= searchMaxZ) {

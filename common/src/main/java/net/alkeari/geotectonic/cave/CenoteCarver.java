@@ -1,13 +1,17 @@
 package net.alkeari.geotectonic.cave;
 
 import com.mojang.serialization.Codec;
+import net.alkeari.geotectonic.config.ModConfig;
+import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CaveVinesBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 import net.minecraft.world.level.chunk.CarvingMask;
@@ -25,6 +29,11 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
     }
 
     @Override
+    protected BlockState caveAirState() {
+        return GeoTectonicBlocks.CENOTE_AIR.get().defaultBlockState();
+    }
+
+    @Override
     protected float minTemperature() { return 0.5f; }
 
     @Override
@@ -35,7 +44,10 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
 
     @Override
     public boolean isStartChunk(CenoteCarverConfig config, RandomSource random) {
-        return random.nextFloat() < config.probability;
+        double prob;
+        try { prob = ModConfig.getCenoteProbability(); }
+        catch (Throwable t) { prob = config.probability; }
+        return ModConfig.isCenoteEnabled() && random.nextFloat() < prob;
     }
 
     @Override
@@ -147,7 +159,7 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
         return anyCarved;
     }
 
-    /** Fills all CAVE_AIR below the water line (y < cy) within the chamber footprint. */
+    /** Fills all CENOTE_CAVE_AIR below the water line (y < cy) within the chamber footprint. */
     private boolean fillWaterBelow(ChunkAccess chunk, int minX, int minZ, int maxX, int maxZ,
                                    int cx, int cy, int cz, float wr, float hr) {
         boolean any = false;
@@ -159,7 +171,7 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
             for (int z = Math.max(minZ, cz - wrCeil); z <= Math.min(maxZ, cz + wrCeil); z++) {
                 for (int y = scanMinY; y < cy; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (chunk.getBlockState(pos).is(Blocks.CAVE_AIR)) {
+                    if (chunk.getBlockState(pos).is(GeoTectonicBlocks.CENOTE_AIR.get())) {
                         chunk.setBlockState(pos, Blocks.WATER.defaultBlockState(), false);
                         chunk.markPosForPostprocessing(pos);
                         any = true;
@@ -184,36 +196,64 @@ public class CenoteCarver extends AbstractGeoCarver<CenoteCarverConfig> {
             for (int z = searchMinZ; z <= searchMaxZ; z++) {
                 for (int y = scanMinY; y <= scanMaxY; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    boolean isCaveAir = chunk.getBlockState(pos).is(Blocks.CAVE_AIR);
+                    boolean isCaveAir = chunk.getBlockState(pos).is(GeoTectonicBlocks.CENOTE_AIR.get());
                     boolean isWater   = chunk.getBlockState(pos).is(Blocks.WATER);
                     if (!isCaveAir && !isWater) continue;
 
                     BlockPos above = pos.above();
                     BlockPos below = pos.below();
 
-                    // Stalactites on dry ceiling
-                    if (isCaveAir && chunk.getBlockState(above).isSolid() && rand.nextFloat() < 0.20f) {
-                        chunk.setBlockState(pos, Blocks.POINTED_DRIPSTONE.defaultBlockState()
-                                .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
-                                .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP)
-                                .setValue(PointedDripstoneBlock.WATERLOGGED, false), false);
-                        continue;
-                    }
+                    if (isCaveAir) {
+                        boolean solidAbove = chunk.getBlockState(above).isSolid();
 
-                    // Calcite on chamber walls
-                    for (Direction dir : Direction.Plane.HORIZONTAL) {
-                        int wx = x + dir.getStepX(), wz = z + dir.getStepZ();
-                        if (wx < minX || wx > maxX || wz < minZ || wz > maxZ) continue;
-                        if (chunk.getBlockState(new BlockPos(wx, y, wz)).isSolid()
-                                && rand.nextFloat() < 0.25f) {
-                            chunk.setBlockState(new BlockPos(wx, y, wz),
-                                    Blocks.CALCITE.defaultBlockState(), false);
+                        // Ceiling treatments: dripstone first, then glow berries in dry zone only
+                        if (solidAbove) {
+                            float r = rand.nextFloat();
+                            if (r < 0.20f) {
+                                chunk.setBlockState(pos, Blocks.POINTED_DRIPSTONE.defaultBlockState()
+                                        .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
+                                        .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP)
+                                        .setValue(PointedDripstoneBlock.WATERLOGGED, false), false);
+                                continue;
+                            } else if (y > cy && r < 0.35f) {
+                                // Glow berries on dry ceiling above water line only
+                                chunk.setBlockState(pos, Blocks.CAVE_VINES.defaultBlockState()
+                                        .setValue(CaveVinesBlock.BERRIES, true), false);
+                                continue;
+                            }
                         }
-                    }
 
-                    // Clay on the submerged floor
-                    if (isWater && chunk.getBlockState(below).isSolid() && rand.nextFloat() < 0.40f) {
-                        chunk.setBlockState(below, Blocks.CLAY.defaultBlockState(), false);
+                        // Calcite on chamber walls
+                        for (Direction dir : Direction.Plane.HORIZONTAL) {
+                            int wx = x + dir.getStepX(), wz = z + dir.getStepZ();
+                            if (wx < minX || wx > maxX || wz < minZ || wz > maxZ) continue;
+                            if (chunk.getBlockState(new BlockPos(wx, y, wz)).isSolid()
+                                    && rand.nextFloat() < 0.25f) {
+                                chunk.setBlockState(new BlockPos(wx, y, wz),
+                                        Blocks.CALCITE.defaultBlockState(), false);
+                            }
+                        }
+
+                    } else { // isWater
+                        boolean solidBelow = below.getY() >= chunk.getMinBuildHeight()
+                                && chunk.getBlockState(below).isSolid();
+
+                        if (solidBelow) {
+                            float r = rand.nextFloat();
+                            if (y == cy && r < 0.30f) {
+                                // Calcite rim at the water surface line
+                                chunk.setBlockState(below, Blocks.CALCITE.defaultBlockState(), false);
+                            } else if (r < 0.40f) {
+                                // Clay on submerged floor
+                                chunk.setBlockState(below, Blocks.CLAY.defaultBlockState(), false);
+                            }
+
+                            // Seagrass replaces water block on solid ground (independent roll)
+                            if (rand.nextFloat() < 0.25f) {
+                                chunk.setBlockState(pos, Blocks.SEAGRASS.defaultBlockState(), false);
+                                chunk.markPosForPostprocessing(pos);
+                            }
+                        }
                     }
                 }
             }

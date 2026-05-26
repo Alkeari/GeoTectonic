@@ -1,0 +1,17 @@
+{
+  "display": {
+    "icon": {"item": "minecraft:magma_block"},
+    "title": {"translate": "advancements.geotectonic.volcanic_vent.title"},
+    "description": {"translate": "advancements.geotectonic.volcanic_vent.description"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "geotectonic:root",
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

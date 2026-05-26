@@ -1,5 +1,7 @@
 package net.alkeari.geotectonic.cave;
 
+import net.minecraft.util.Mth;
+
 public class FractureShape {
 
     public static float widthRadius(int y) {
@@ -21,6 +23,6 @@ public class FractureShape {
     }
 
     private static float lerp(float a, float b, float t) {
-        return a + (b - a) * Math.clamp(t, 0f, 1f);
+        return a + (b - a) * Mth.clamp(t, 0f, 1f);
     }
 }

@@ -1,0 +1,17 @@
+{
+  "display": {
+    "icon": {"item": "minecraft:amethyst_shard"},
+    "title": {"translate": "advancements.geotectonic.crystal_vein.title"},
+    "description": {"translate": "advancements.geotectonic.crystal_vein.description"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "geotectonic:root",
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

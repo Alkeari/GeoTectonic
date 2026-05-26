@@ -28,6 +28,8 @@ public abstract class AbstractGeoCarver<C extends CarverConfiguration> extends W
         return temp >= minTemperature() && temp <= maxTemperature();
     }
 
+    protected abstract BlockState caveAirState();
+
     protected boolean shouldCarveBlock(BlockState state) {
         if (state.isAir()) return false;
         if (state.is(Blocks.BEDROCK)) return false;
@@ -73,7 +75,7 @@ public abstract class AbstractGeoCarver<C extends CarverConfiguration> extends W
                     BlockState state = chunk.getBlockState(pos);
                     if (!shouldCarveBlock(state)) continue;
 
-                    chunk.setBlockState(pos, Blocks.CAVE_AIR.defaultBlockState(), false);
+                    chunk.setBlockState(pos, caveAirState(), false);
                     carvingMask.set(localX, blockY, localZ);
                     anyCarved = true;
                 }
@@ -127,7 +129,7 @@ public abstract class AbstractGeoCarver<C extends CarverConfiguration> extends W
                     if (!shouldCarveBlock(chunk.getBlockState(new BlockPos(blockX, blockY, blockZ)))) continue;
 
                     chunk.setBlockState(new BlockPos(blockX, blockY, blockZ),
-                            Blocks.CAVE_AIR.defaultBlockState(), false);
+                            caveAirState(), false);
                     carvingMask.set(localX, blockY, localZ);
                     anyCarved = true;
                 }

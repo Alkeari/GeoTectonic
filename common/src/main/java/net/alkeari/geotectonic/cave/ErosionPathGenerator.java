@@ -23,6 +23,8 @@ public class ErosionPathGenerator {
         List<PathPoint> points = new ArrayList<>();
         int totalRun = 60 + random.nextInt(61);           // 60–120 blocks total horizontal travel
         float headingDeg = random.nextInt(4) * 90.0f;    // 0, 90, 180, or 270
+        int chamberTrigger = totalRun / 3 + random.nextInt(Math.max(1, totalRun / 3)); // 33–67% of run
+        boolean chamberPlaced = false;
 
         int cx = openingX;
         int cy = startY;
@@ -33,17 +35,24 @@ public class ErosionPathGenerator {
             int stepXZ   = 5 + random.nextInt(4);             // 5–8 blocks between control points
             int driftDeg = (random.nextInt(9) - 4) * 5;      // −20 to +20 in 5° steps
             int descentY = random.nextInt(2);                  // 0 or 1
-            float wr     = 1.8f + random.nextFloat() * 1.2f; // 1.8–3.0 width radius (3.6–6 blocks wide)
-            float hr     = 1.8f + random.nextFloat() * 0.7f; // 1.8–2.5 height radius (3.6–5 blocks tall)
+            float wr     = 1.8f + random.nextFloat() * 1.2f; // 1.8–3.0 width radius
+            float hr     = 1.8f + random.nextFloat() * 0.7f; // 1.8–2.5 height radius
 
             headingDeg = ((headingDeg + driftDeg) % 360 + 360) % 360;
             double rad = Math.toRadians(headingDeg);
             cx += (int) Math.round(Math.sin(rad) * stepXZ);
             cz -= (int) Math.round(Math.cos(rad) * stepXZ);
             cy -= descentY;
+            travelSoFar += stepXZ;
+
+            // Widen one waypoint in the middle section into a pool chamber
+            if (!chamberPlaced && travelSoFar >= chamberTrigger) {
+                chamberPlaced = true;
+                wr = 4.0f + random.nextFloat() * 1.5f; // 4.0–5.5
+                hr = 3.0f + random.nextFloat() * 1.0f; // 3.0–4.0
+            }
 
             points.add(new PathPoint(new BlockPos(cx, cy, cz), wr, hr));
-            travelSoFar += stepXZ;
         }
 
         return points;

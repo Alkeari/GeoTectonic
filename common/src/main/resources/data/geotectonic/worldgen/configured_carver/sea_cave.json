@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:sea_cave",
+  "config": {
+    "probability": 0.010
+  }
+}

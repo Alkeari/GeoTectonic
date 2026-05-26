@@ -1,0 +1,17 @@
+{
+  "display": {
+    "icon": {"item": "minecraft:pointed_dripstone"},
+    "title": {"translate": "advancements.geotectonic.karst.title"},
+    "description": {"translate": "advancements.geotectonic.karst.description"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "geotectonic:root",
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

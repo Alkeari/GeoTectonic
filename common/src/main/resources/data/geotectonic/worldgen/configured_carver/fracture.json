@@ -1,6 +1,6 @@
 {
   "type": "geotectonic:fracture",
   "config": {
-    "probability": 0.0007
+    "probability": 0.005
   }
 }

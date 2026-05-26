@@ -1,0 +1,5 @@
+{
+  "type": "geotectonic:add_carver",
+  "biomes": "#minecraft:is_overworld",
+  "carvers": ["geotectonic:sea_cave"]
+}

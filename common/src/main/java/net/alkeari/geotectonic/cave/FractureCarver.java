@@ -1,7 +1,10 @@
 package net.alkeari.geotectonic.cave;
 
 import com.mojang.serialization.Codec;
+import net.alkeari.geotectonic.config.ModConfig;
+import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -23,13 +26,21 @@ public class FractureCarver extends AbstractGeoCarver<FractureCarverConfig> {
     }
 
     @Override
+    protected BlockState caveAirState() {
+        return GeoTectonicBlocks.FRACTURE_AIR.get().defaultBlockState();
+    }
+
+    @Override
     public int getRange() {
         return 50;
     }
 
     @Override
     public boolean isStartChunk(FractureCarverConfig config, RandomSource random) {
-        return random.nextFloat() < config.probability;
+        double prob;
+        try { prob = ModConfig.getFractureProbability(); }
+        catch (Throwable t) { prob = config.probability; }
+        return ModConfig.isFractureEnabled() && random.nextFloat() < prob;
     }
 
     @Override

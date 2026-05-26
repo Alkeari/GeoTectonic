@@ -10,6 +10,9 @@
   "entrypoints": {
     "main": [
       "net.alkeari.geotectonic.fabric.GeoTectonicFabric"
+    ],
+    "client": [
+      "net.alkeari.geotectonic.fabric.GeoTectonicFabricClient"
     ]
   },
   "mixins": [

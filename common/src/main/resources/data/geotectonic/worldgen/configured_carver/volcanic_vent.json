@@ -1,0 +1,6 @@
+{
+  "type": "geotectonic:volcanic_vent",
+  "config": {
+    "probability": 0.010
+  }
+}

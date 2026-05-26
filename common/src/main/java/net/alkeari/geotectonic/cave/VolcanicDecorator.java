@@ -1,5 +1,6 @@
 package net.alkeari.geotectonic.cave;
 
+import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -20,9 +21,9 @@ public class VolcanicDecorator {
 
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                for (int y = 0; y >= -60; y--) {
+                for (int y = chunk.getMaxBuildHeight() - 1; y >= -60; y--) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (!chunk.getBlockState(pos).is(Blocks.CAVE_AIR)) continue;
+                    if (!chunk.getBlockState(pos).is(GeoTectonicBlocks.FRACTURE_AIR.get())) continue;
 
                     BlockPos belowPos = pos.below();
                     BlockState below = chunk.getBlockState(belowPos);
@@ -76,7 +77,10 @@ public class VolcanicDecorator {
 
     private static void placeWall(ChunkAccess chunk, RandomSource rand, BlockPos wallPos, int airY) {
         float r = rand.nextFloat();
-        if (airY >= -20) {
+        if (airY > 64) {
+            // Chimney: 5% basalt walls — crack is cool/dry near the surface
+            if (r < 0.05f) chunk.setBlockState(wallPos, BASALT, false);
+        } else if (airY >= -20) {
             // Warm: 10% → BASALT
             if (r < 0.10f) chunk.setBlockState(wallPos, BASALT, false);
         } else if (airY >= -40) {
@@ -91,7 +95,7 @@ public class VolcanicDecorator {
                 chunk.setBlockState(wallPos, MAGMA, false);
             } else if (r < 0.65f) {
                 // Lava fall: only if air exists above wall block
-                if (chunk.getBlockState(wallPos.above()).is(Blocks.CAVE_AIR)) {
+                if (chunk.getBlockState(wallPos.above()).is(GeoTectonicBlocks.FRACTURE_AIR.get())) {
                     chunk.setBlockState(wallPos, LAVA, false);
                     chunk.markPosForPostprocessing(wallPos);
                 }
