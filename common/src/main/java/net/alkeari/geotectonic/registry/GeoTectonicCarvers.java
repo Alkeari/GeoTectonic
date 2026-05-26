@@ -51,31 +51,31 @@ public class GeoTectonicCarvers {
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> FRACTURE_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "fracture"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "fracture"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> KARST_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "karst"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "karst"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> CENOTE_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "cenote"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "cenote"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> EROSION_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "erosion"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "erosion"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> SEA_CAVE_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "sea_cave"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "sea_cave"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> CRYSTAL_VEIN_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "crystal_vein"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "crystal_vein"));
 
     public static final ResourceKey<ConfiguredWorldCarver<?>> VOLCANIC_VENT_KEY =
         ResourceKey.create(Registries.CONFIGURED_CARVER,
-            new ResourceLocation(GeoTectonic.MOD_ID, "volcanic_vent"));
+            ResourceLocation.fromNamespaceAndPath(GeoTectonic.MOD_ID, "volcanic_vent"));
 
     public static void init() {
         CARVERS.register();

@@ -5,7 +5,7 @@ import dev.architectury.networking.NetworkManager;
 import net.alkeari.geotectonic.command.GeoTectonicCommands;
 import net.alkeari.geotectonic.registry.GeoTectonicBlocks;
 import net.alkeari.geotectonic.registry.GeoTectonicCarvers;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class GeoTectonic {
             GeoTectonicCommands.register(dispatcher, registryAccess));
         NetworkManager.registerReceiver(
             NetworkManager.Side.C2S,
-            new ResourceLocation(MOD_ID, "cave_entered"),
+            ResourceLocation.fromNamespaceAndPath(MOD_ID, "cave_entered"),
             (buf, ctx) -> {
                 String caveType = buf.readUtf();
                 ctx.queue(() -> {
@@ -37,8 +37,8 @@ public class GeoTectonic {
     }
 
     private static void grantAdvancement(ServerPlayer player, String name) {
-        Advancement adv = player.server.getAdvancements()
-            .getAdvancement(new ResourceLocation(MOD_ID, name));
+        AdvancementHolder adv = player.server.getAdvancements()
+            .get(ResourceLocation.fromNamespaceAndPath(MOD_ID, name));
         if (adv != null) {
             player.getAdvancements().award(adv, "entered");
         }

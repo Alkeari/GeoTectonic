@@ -1,0 +1,103 @@
+plugins {
+    id 'com.gradleup.shadow'
+}
+
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+configurations {
+    common
+    shadowCommon
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+    modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
+
+    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
+    shadowCommon(project(path: ':common', configuration: 'transformProductionNeoForge')) { transitive = false }
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    exclude 'fabric.mod.json'
+    exclude 'architectury.common.json'
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = 'NEOFORGE'
+}
+
+jar {
+    archiveClassifier = 'dev'
+}
+
+sourcesJar {
+    def commonSources = project(':common').sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+// Workaround for Architectury Loom 1.14 beta: generates wrong module-path JARs for NeoForge 1.21.1.
+// NeoForge userdev config.json specifies securejarhandler:3.0.8 and net.neoforged:JarJarFileSystems:0.4.1,
+// but Loom resolves Forge-era artifacts (securejarhandler:2.1.10, net.minecraftforge:JarJarFileSystems:0.3.19).
+// securejarhandler-2.1.10 lacks UnionPathFilter, which bootstraplauncher-2.0.2 requires at launch.
+afterEvaluate {
+    tasks.withType(JavaExec).configureEach { task ->
+        task.doFirst {
+            task.jvmArgs = task.jvmArgs.collect { arg ->
+                (arg as String)
+                    .replace(
+                        "securejarhandler${File.separator}2.1.10${File.separator}51e6a22c6c716beb11e244bf5b8be480f51dd6b5${File.separator}securejarhandler-2.1.10.jar",
+                        "securejarhandler${File.separator}3.0.8${File.separator}c0ef95cecd8699a0449053ac7d9c160748d902cd${File.separator}securejarhandler-3.0.8.jar"
+                    )
+                    .replace(
+                        "net.minecraftforge${File.separator}JarJarFileSystems${File.separator}0.3.19${File.separator}2464eb7d6b9ddb9db36a82cf8a95193e5c6fe020${File.separator}JarJarFileSystems-0.3.19.jar",
+                        "net.neoforged${File.separator}JarJarFileSystems${File.separator}0.4.1${File.separator}78f59f89defcd032ed788b151ca6a0d40ace796a${File.separator}JarJarFileSystems-0.4.1.jar"
+                    )
+                    .replace(
+                        "asm-commons${File.separator}9.9.1${File.separator}ab35de4c537184a09339069f1a3b3aacf2289149${File.separator}asm-commons-9.9.1.jar",
+                        "asm-commons${File.separator}9.7${File.separator}e86dda4696d3c185fcc95d8d311904e7ce38a53f${File.separator}asm-commons-9.7.jar"
+                    )
+                    .replace(
+                        "asm-util${File.separator}9.9.1${File.separator}e51f5b0ae0b0c1960687ae970a2a3434d39d8abb${File.separator}asm-util-9.9.1.jar",
+                        "asm-util${File.separator}9.7${File.separator}c0655519f24d92af2202cb681cd7c1569df6ead6${File.separator}asm-util-9.7.jar"
+                    )
+                    .replace(
+                        "asm-analysis${File.separator}9.9.1${File.separator}1ab8d9316ef7a67240087919a708246c37ed1660${File.separator}asm-analysis-9.9.1.jar",
+                        "asm-analysis${File.separator}9.7${File.separator}e4a258b7eb96107106c0599f0061cfc1832fe07a${File.separator}asm-analysis-9.7.jar"
+                    )
+                    .replace(
+                        "asm-tree${File.separator}9.9.1${File.separator}b6b1b3366296163b4b1f540731aad0a2baa484d8${File.separator}asm-tree-9.9.1.jar",
+                        "asm-tree${File.separator}9.7${File.separator}e446a17b175bfb733b87c5c2560ccb4e57d69f1a${File.separator}asm-tree-9.7.jar"
+                    )
+                    .replace(
+                        "org.ow2.asm${File.separator}asm${File.separator}9.9.1${File.separator}2ceea6ab43bcae1979b2a6d85fc0ca429877e5ab${File.separator}asm-9.9.1.jar",
+                        "org.ow2.asm${File.separator}asm${File.separator}9.7${File.separator}73d7b3086e14beb604ced229c302feff6449723${File.separator}asm-9.7.jar"
+                    )
+            }
+        }
+    }
+}
