@@ -81,10 +81,11 @@ public class CaveDetectionHandler {
     private static void sendAdvancementPacket(String caveType) {
         if (awardedThisSession.add(caveType)) {
             io.netty.buffer.ByteBuf rawBuf = io.netty.buffer.Unpooled.buffer();
-            net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(rawBuf);
+            net.minecraft.network.RegistryFriendlyByteBuf buf = new net.minecraft.network.RegistryFriendlyByteBuf(
+                rawBuf, Minecraft.getInstance().getConnection().registryAccess());
             buf.writeUtf(caveType);
             dev.architectury.networking.NetworkManager.sendToServer(
-                new ResourceLocation("geotectonic", "cave_entered"), buf
+                ResourceLocation.fromNamespaceAndPath("geotectonic", "cave_entered"), buf
             );
         }
     }
@@ -118,12 +119,12 @@ public class CaveDetectionHandler {
         return switch (caveType) {
             case "fracture" -> SoundEvents.AMBIENT_BASALT_DELTAS_LOOP.value();
             case "karst"    -> SoundEvent.createFixedRangeEvent(
-                                   new ResourceLocation("minecraft", "ambient.dripstone_caves.loop"), 16.0f);
+                                   ResourceLocation.fromNamespaceAndPath("minecraft", "ambient.dripstone_caves.loop"), 16.0f);
             case "cenote"   -> SoundEvents.AMBIENT_UNDERWATER_LOOP;
             case "erosion"       -> SoundEvents.WEATHER_RAIN;
             case "sea_cave"      -> SoundEvents.AMBIENT_UNDERWATER_LOOP;
             case "crystal_vein"  -> SoundEvent.createFixedRangeEvent(
-                                       new ResourceLocation("minecraft", "ambient.dripstone_caves.loop"), 16.0f);
+                                       ResourceLocation.fromNamespaceAndPath("minecraft", "ambient.dripstone_caves.loop"), 16.0f);
             case "volcanic_vent" -> SoundEvents.AMBIENT_BASALT_DELTAS_LOOP.value();
             default              -> null;
         };

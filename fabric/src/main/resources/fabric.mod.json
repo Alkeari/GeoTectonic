@@ -19,10 +19,10 @@
     "geotectonic.common.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.23",
+    "fabricloader": ">=0.16.9",
     "fabric-api": "*",
-    "minecraft": ">=1.20.1",
-    "architectury": ">=9.2.14",
-    "cloth-config2": ">=11.1.136"
+    "minecraft": ">=1.21.1",
+    "architectury": ">=13.0.8",
+    "cloth-config2": ">=15.0.140"
   }
 }
