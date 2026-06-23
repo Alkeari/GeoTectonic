@@ -15,6 +15,8 @@ public class GeoTectonic {
     public static final String MOD_ID = "geotectonic";
     public static final Logger LOGGER = LoggerFactory.getLogger("GeoTectonic");
 
+    public static final String OVERRIDE_PACK_ID = "geotectonic_overrides";
+
     public static void init() {
         GeoTectonicBlocks.init();
         GeoTectonicCarvers.init();
