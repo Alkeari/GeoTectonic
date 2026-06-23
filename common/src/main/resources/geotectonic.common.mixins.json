@@ -3,5 +3,7 @@
   "minVersion": "0.8",
   "package": "net.alkeari.geotectonic.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": []
+  "mixins": [
+    "PackRepositoryMixin"
+  ]
 }
